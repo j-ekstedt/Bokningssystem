@@ -6,8 +6,15 @@ import models.User;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.prefs.Preferences;
 
 public class LoginPanel extends JPanel {
+
+    // Preferences används för att spara "Kom ihåg användare"-informationen lokalt
+    private static final Preferences preferences = Preferences.userNodeForPackage(LoginPanel.class);
+
 
     public LoginPanel(ViewManager parentFrame, UserDataManager userDataManager) {
 
@@ -42,6 +49,11 @@ public class LoginPanel extends JPanel {
         idField.setFont(font.deriveFont(Font.PLAIN).deriveFont(14.0f));
         idField.setMaximumSize(new Dimension(550, 25));
 
+        String savedUserId = preferences.get("savedUserId", "");
+        if (!savedUserId.isEmpty()) {
+            idField.setText(savedUserId);
+        }
+
         JLabel passwordLabel = new JLabel("Lösenord:");
         passwordLabel.setFont(font.deriveFont(16.0f));
         JPasswordField passwordField = new JPasswordField();
@@ -60,6 +72,11 @@ public class LoginPanel extends JPanel {
             }
         });
 
+        JCheckBox rememberUserCheckBox = new JCheckBox("Kom ihåg användare");
+        rememberUserCheckBox.setFont(font.deriveFont(Font.PLAIN).deriveFont(14.0f));
+        rememberUserCheckBox.setSelected(!savedUserId.isEmpty());
+
+
         fieldPanel.add(idLabel);
         fieldPanel.add(idField);
         fieldPanel.add(Box.createVerticalStrut(15));
@@ -68,6 +85,7 @@ public class LoginPanel extends JPanel {
         fieldPanel.add(Box.createVerticalStrut(10));
         fieldPanel.add(showPasswordCheckBox);
         fieldPanel.add(Box.createVerticalStrut(20));
+        fieldPanel.add(rememberUserCheckBox);
 
         backgroundLabel.add(fieldPanel, BorderLayout.CENTER);
         backgroundLabel.add(headerText, BorderLayout.NORTH);
@@ -101,9 +119,15 @@ public class LoginPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Alla fält måste vara ifyllda.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // Läser från fil
+
             User user = UserDataManager.getInstance().authenticateUser(id, password);
             if (user != null) {
+                if (rememberUserCheckBox.isSelected()) {
+                    preferences.put("savedUserId", id);
+                } else {
+                    preferences.remove("savedUserId");
+                }
+
                 if (user instanceof Customer) {
                     JOptionPane.showMessageDialog(this, "Inloggad som kund: " + user.getName());
                     parentFrame.showBookingPanel(user);
@@ -116,12 +140,61 @@ public class LoginPanel extends JPanel {
             }
         });
 
-        // Action listener för backButton
         backButton.addActionListener(e -> parentFrame.showCard("Start"));
 
         buttonPanel.add(loginButton);
         buttonPanel.add(backButton);
 
         backgroundLabel.add(buttonPanel, BorderLayout.SOUTH);
+
+        idField.setFocusable(true);
+        passwordField.setFocusable(true);
+        loginButton.setFocusable(true);
+
+        KeyAdapter enterKeyListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    loginButton.doClick();
+                }
+            }
+        };
+
+        KeyAdapter tabKeyListener = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                    if (e.isShiftDown()) {
+
+                        if (passwordField.hasFocus()) {
+                            idField.requestFocus();
+                        }
+                    } else {
+
+                        if (idField.hasFocus()) {
+                            passwordField.requestFocus();
+                        }
+
+                        if (passwordField.hasFocus()) {
+                            loginButton.requestFocus();
+                        }
+                    }
+                }
+            }
+        };
+
+// Lägg till tabKeyListener för de relevanta komponenterna:
+        idField.addKeyListener(tabKeyListener);
+        passwordField.addKeyListener(tabKeyListener);
+
+        idField.setNextFocusableComponent(passwordField);
+        passwordField.setNextFocusableComponent(loginButton);
+        loginButton.setNextFocusableComponent(idField);
+
+        idField.addKeyListener(enterKeyListener);
+        passwordField.addKeyListener(enterKeyListener);
+
+        idField.addKeyListener(tabKeyListener);
+        passwordField.addKeyListener(tabKeyListener);
     }
 }

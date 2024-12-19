@@ -61,8 +61,23 @@ public class BookingPanel extends JPanel {
         gbc.weightx = 0.7;
         gbc.weighty = 1.0;
         setupTimePanel(backgroundLabel, gbc);
+        JButton logoutButton = new JButton("Logga ut");
+        logoutButton.setFont(new Font("Times New Roman", Font.BOLD, 14));
+        logoutButton.setBackground(Color.WHITE);
+        logoutButton.addActionListener(e -> logout());
 
+        add(logoutButton, BorderLayout.SOUTH);
     }
+
+    private void logout() {
+        JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        frame.getContentPane().removeAll();
+        ViewManager viewManager = new ViewManager();
+        frame.getContentPane().add(new StartPanel(viewManager));
+        frame.revalidate();
+        frame.repaint();
+    }
+
 
     private void setupCalendar(JLabel parentPanel, GridBagConstraints gbc) {
         JPanel calendarPanel = new JPanel(new BorderLayout());

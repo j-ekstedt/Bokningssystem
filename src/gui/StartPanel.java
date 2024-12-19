@@ -5,7 +5,10 @@ import java.awt.*;
 
 public class StartPanel extends JPanel {
 
-    public StartPanel(ViewManager parentFrame) {
+    private ViewManager viewManager;
+
+    public StartPanel(ViewManager viewManager) {
+        this.viewManager = viewManager;
 
         Font font = new Font("Times New Roman", Font.BOLD, 16);
 
@@ -33,10 +36,10 @@ public class StartPanel extends JPanel {
 
         // Knappar för inloggning
         JButton userLoginButton = new JButton("Som kund");
-        userLoginButton.addActionListener(e -> parentFrame.showCard("Login"));
+        userLoginButton.addActionListener(e -> viewManager.showCard("Login"));
 
         JButton businessLoginButton = new JButton("Som företag");
-        businessLoginButton.addActionListener(e -> parentFrame.showCard("Login"));
+        businessLoginButton.addActionListener(e -> viewManager.showCard("Login"));
 
 
         // Stylar knapparna
@@ -77,7 +80,7 @@ public class StartPanel extends JPanel {
         // MouseListnener för "länken"
         registerLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                parentFrame.showCard("Register");
+                viewManager.showCard("Register");
             }
         });
 

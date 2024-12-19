@@ -36,7 +36,7 @@ public class AdminPanel extends JPanel {
         headerLabel.setForeground(Color.BLACK);
         headerLabel.setFont(font);
         headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        overlayPanel.add(headerLabel, BorderLayout.NORTH);;
+        overlayPanel.add(headerLabel, BorderLayout.NORTH);
 
         // Textområdet för att visa bokningar
         bookingDetails = new JTextArea();
@@ -67,6 +67,14 @@ public class AdminPanel extends JPanel {
 
         buttonPanel.add(refreshButton);
         buttonPanel.add(addTimeButton);
+        overlayPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        JButton logoutButton = new JButton("Logga ut");
+        logoutButton.setFont(font.deriveFont(14.0f));
+        logoutButton.setBackground(Color.WHITE);
+        logoutButton.addActionListener(e -> logout());
+
+        buttonPanel.add(logoutButton);
         overlayPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         // Ladda bokningar vid start
@@ -114,5 +122,15 @@ public class AdminPanel extends JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Felaktigt format. Kontrollera datum och tider.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
         }
+    }
+        private void logout() {
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            frame.getContentPane().removeAll();
+
+            ViewManager viewManager = new ViewManager();
+
+            frame.getContentPane().add(new StartPanel(viewManager));
+            frame.revalidate();
+            frame.repaint();
     }
 }

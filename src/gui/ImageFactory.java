@@ -13,7 +13,7 @@ public class ImageFactory {
      * @return a scaled ImageIcon
      */
     public static ImageIcon createScaledImageIcon(String path, int width, int height) {
-        //TODO kanske felhantering om pathen inte finns(?)
+
         ImageIcon originalIcon = new ImageIcon(path);
         Image scaledImage = originalIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
 

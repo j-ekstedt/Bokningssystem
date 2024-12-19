@@ -3,6 +3,7 @@ package gui;
 import data.UserDataManager;
 import models.Customer;
 import models.User;
+import models.UserFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -116,7 +117,7 @@ public class RegistrationPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Alla fält måste vara ifyllda.", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // TODO: alla nedan kontroller kan nog göras med regex istället, kanske inte behövs ändras men
+
             // Kontrollerar att persnr består av siffror och endast 10st
         if (id.length() != 10 || !id.chars().allMatch(Character::isDigit)) {
             JOptionPane.showMessageDialog(this, "Ange personnummer i tio siffror", "Felmeddelande", JOptionPane.ERROR_MESSAGE);
@@ -133,8 +134,10 @@ public class RegistrationPanel extends JPanel {
             return;
         }
             // Sparar till fil
-            User newUser = new Customer(id, firstName + " " + lastName, email, phonenumber, password);
-            boolean success = UserDataManager.getInstance().registerUser(newUser, "Customer");
+            //User newUser = new Customer(id, firstName + " " + lastName, email, phonenumber, password);
+            User newUser = UserFactory.createUser("Customer", id, firstName + " " + lastName, email, phonenumber, password);
+
+        boolean success = UserDataManager.getInstance().registerUser(newUser, "Customer");
             if (success) {
                 JOptionPane.showMessageDialog(this, "Registrering lyckades!");
                 parentFrame.showCard("Login");
