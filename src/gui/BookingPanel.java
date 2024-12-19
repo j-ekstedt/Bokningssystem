@@ -11,7 +11,6 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 
-// TODO: fixa så kalendern inte ändrar storlek osv. när man väljer ett datum
 public class BookingPanel extends JPanel {
     private final AppointmentManager appointmentManager;
     private final Customer customer;

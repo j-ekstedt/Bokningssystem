@@ -84,7 +84,6 @@ public class AdminPanel extends JPanel {
     private void updateBookingDetails() {
         var allBookings = DatabaseManager.getInstance().getAllBookings();
 
-        // TODO: sortera bokningarna i ordning
 
         StringBuilder details = new StringBuilder("Alla bokningar:\n");
         for (Booking booking : allBookings) {
